@@ -8,7 +8,6 @@ from random import choice
 with open("test_words.json") as test_words,open('keyboard-set.json') as keyboard_set:
     keyboard = json.load(keyboard_set)
     data = json.load(test_words)
-    print(data)
 
 
 class Main(QWidget):
@@ -124,7 +123,6 @@ class Main(QWidget):
     def run(self):
         """Начать упражнение"""
         self.start_ex.setDisabled(True)
-        print(self.level_programme[self.choice[:-1]]+[int(self.choice[0])])
         dialog = Keyboard(self.level_programme[self.choice[:-1]]+[int(self.choice[0])])
         dialog.show()
         self.dialogs.append(dialog)
@@ -162,7 +160,6 @@ class Main(QWidget):
 
     def input(self):
         """Механизм обработки введеных пользователем входных данных, включение таймера"""
-        print("___")
         if not self.timer_start:
             self.timer_start = True
             self.timer.timeout.connect(self.on_timer)
@@ -388,7 +385,6 @@ class Keyboard(QWidget):
                     continue
 
             for i in range(len(self.keyboard[:-1])):
-                print(i)
                 try:
                     if self.current_sign < len(self.text) \
                             and self.text[self.current_sign] == self.keyboard[i].text() and not (self.mistake):
@@ -412,7 +408,6 @@ class Keyboard(QWidget):
             if self.dialog_data[2] < 7:
                 with open("level_programmes.json") as programme:
                     level = json.load(programme)
-                    print(level[str(self.dialog_data[2] + 1) + " Уровень"][1])
                     level[str(self.dialog_data[2] + 1) + " Уровень"][1] = True
                 with open("level_programmes.json", "w") as programme:
                     json.dump(level, programme)
