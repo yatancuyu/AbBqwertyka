@@ -5,17 +5,20 @@ from PyQt5.QtCore import QTimer, Qt
 import json
 from random import choice
 
-with open("l.json") as l,open('keyboard-set.json') as keyboard_set:
+with open("test_words.json") as test_words,open('keyboard-set.json') as keyboard_set:
     keyboard = json.load(keyboard_set)
-    data = json.load(l)
+    data = json.load(test_words)
+    print(data)
 
 
 class Main(QWidget):
+    """Главное окно"""
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
+        """Инициализация всех необходимых для работы виджетов и переменных"""
         self.screensize_x, self.screensize_y = 1500, 800
         self.setFixedSize(self.screensize_x, self.screensize_y)
         self.setWindowTitle('AБВqwertyKa')
@@ -25,8 +28,6 @@ class Main(QWidget):
         self.background.setGeometry(0,0,1500,800)
         self.background.setStyleSheet("background-color:rgb(150,200,255)")
 
-        self.hello_window = QLabel(self)
-        self.hello_window.move(500, 100)
         self.dialogs = []
 
         self.current_word = 0
@@ -57,11 +58,10 @@ class Main(QWidget):
         self.levels_list = QComboBox(self)
         self.levels_list.setGeometry(1200, 300, 200, 50)
         self.levels_list.setStyleSheet('''border-width: 1px;
-    padding: 1px;
-    border-style: solid;
-    border-color: rgb(0,170,255);
-    border-radius: 5px;
-''')
+                            padding: 1px;
+                            border-style: solid;
+                            border-color: rgb(0,170,255);
+                            border-radius: 5px;''')
         self.level_programme = {}
         self.tutorialimg = QLabel(self)
         self.tutorialimg.setGeometry(200,0,953,800)
@@ -89,13 +89,14 @@ class Main(QWidget):
 
 
     def exit(self):
+        """Раздел Выход. Закрывает окно программы."""
         self.close()
 
 
     def learning(self):
+        """Раздел обучение. Здесь можно окрыть упржнение и посмотреть обучение"""
         self.clear()
         self.tutorialimg.show()
-        self.dialogs = []
         with open("level_programmes.json") as j:
             self.level_programme = json.load(j)
         self.levels_list.clear()
@@ -112,6 +113,7 @@ class Main(QWidget):
 
 
     def select(self, choice):
+        """Выбрать упражнение"""
         self.choice = choice
         if self.level_programme[self.choice[:-1]][1]:
             self.start_ex.setEnabled(True)
@@ -120,6 +122,7 @@ class Main(QWidget):
 
 
     def run(self):
+        """Начать упражнение"""
         self.start_ex.setDisabled(True)
         print(self.level_programme[self.choice[:-1]]+[int(self.choice[0])])
         dialog = Keyboard(self.level_programme[self.choice[:-1]]+[int(self.choice[0])])
@@ -128,13 +131,14 @@ class Main(QWidget):
 
 
     def test(self):
+        """Раздел тестирование. Здесь производится тестирование пользователя"""
         self.clear()
         self.timer = QTimer(self)
         self.timer_start = False
         self.inputer.setEnabled(True)
         self.inputer.show()
         self.test_statistics = [0 for i in range(6)]
-        self.timer_value = 60
+        self.timer_value = 5
         self.time_show.show()
         self.time_show.setText("1:00")
         self.refresh()
@@ -144,6 +148,7 @@ class Main(QWidget):
 
 
     def refresh(self):
+        """Показ слов пользователю"""
         self.current_word = 0
         prev = 100
         for i in range(10):
@@ -156,6 +161,7 @@ class Main(QWidget):
 
 
     def input(self):
+        """Механизм обработки введеных пользователем входных данных, включение таймера"""
         print("___")
         if not self.timer_start:
             self.timer_start = True
@@ -184,6 +190,7 @@ class Main(QWidget):
 
 
     def on_timer(self):
+        """Отсчет времени"""
         self.timer_value -= 1
         self.time_show.setText('0:' + str(self.timer_value).rjust(2, '0'))
         if self.timer_value == 0:
@@ -192,18 +199,19 @@ class Main(QWidget):
 
 
     def result(self):
+        """Подведение итогов"""
         self.clear()
         self.back_menu.show()
         self.test_result.show()
-        self.test_statistics[0] = int(self.test_statistics[4] * 1.1)
+        self.test_statistics[0] = int(self.test_statistics[4] * 1.7)
         self.test_statistics[3] = self.test_statistics[1] + self.test_statistics[2]
         self.test_result.setStyleSheet('background-image: url(resultimg.png)')
         coords = [((550, 265, 50, 50), QFont('Arial', 30), 'green'),
-                  ((650, 333, 50, 50), QFont('Arial', 18), 'red'),
-                  ((700, 333, 50, 50), QFont('Arial', 18), 'green'),
-                  ((750, 333, 50, 50), QFont('Arial', 18), 'grey'),
-                  ((750, 370, 50, 50), QFont('Arial', 18), 'green'),
-                  ((750, 400, 50, 50), QFont('Arial', 18), 'red')]
+                  ((600, 333, 50, 50), QFont('Arial', 18), 'red'),
+                  ((650, 333, 50, 50), QFont('Arial', 18), 'green'),
+                  ((700, 333, 50, 50), QFont('Arial', 18), 'grey'),
+                  ((700, 370, 50, 50), QFont('Arial', 18), 'green'),
+                  ((700, 400, 50, 50), QFont('Arial', 18), 'red')]
         for i in range(6):
             self.statistics[i].show()
             self.statistics[i].setGeometry(*coords[i][0])
@@ -213,10 +221,10 @@ class Main(QWidget):
 
 
     def clear(self):
+        """Очистка окна при переходе от раздела к разделу"""
         for i in self.menu_buttons:
             i.hide()
             i.setDisabled(True)
-        self.hello_window.hide()
         self.back_menu.hide()
         self.levels_list.hide()
         self.test_result.hide()
@@ -235,14 +243,15 @@ class Main(QWidget):
 
 
     def menu(self):
+        """Раздел меню. Здесь можно перейти в другие разделы."""
         self.clear()
         for i in self.menu_buttons:
             i.setEnabled(True)
             i.show()
-        self.hello_window.show()
 
 
 class Keyboard(QWidget):
+    """Окно упражнения"""
     def __init__(self, text):
         super().__init__()
         self.dialog_data = text
