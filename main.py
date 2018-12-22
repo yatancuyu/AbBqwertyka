@@ -1,17 +1,18 @@
 import sys
 from PyQt5.QtWidgets import QPushButton, QApplication, QWidget, QLabel, QLineEdit, QComboBox
-from PyQt5.QtGui import QPainter, QColor, QFont, QPen,QIcon
+from PyQt5.QtGui import QPainter, QColor, QFont, QPen, QIcon
 from PyQt5.QtCore import QTimer, Qt
 import json
 from random import choice
 
-with open("test_words.json") as test_words,open('keyboard-set.json') as keyboard_set:
+with open("test_words.json") as test_words, open('keyboard-set.json') as keyboard_set:
     keyboard = json.load(keyboard_set)
     data = json.load(test_words)
 
 
 class Main(QWidget):
     """Главное окно"""
+
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -24,7 +25,7 @@ class Main(QWidget):
         self.setWindowIcon(QIcon("icon.png"))
         self.move(50, 20)
         self.background = QLabel(self)
-        self.background.setGeometry(0,0,1500,800)
+        self.background.setGeometry(0, 0, 1500, 800)
         self.background.setStyleSheet("background-color:rgb(150,200,255)")
 
         self.dialogs = []
@@ -35,7 +36,6 @@ class Main(QWidget):
         self.inputer = QLineEdit(self)
         self.inputer.setGeometry(100, 460, 800, 30)
         self.inputer.setDisabled(True)
-
 
         self.test_words = [QLabel(self) for i in range(10)]
         self.test_statistics = [0, 0, 0, 0, 0, 0]
@@ -63,7 +63,7 @@ class Main(QWidget):
                             border-radius: 5px;''')
         self.level_programme = {}
         self.tutorialimg = QLabel(self)
-        self.tutorialimg.setGeometry(200,0,953,800)
+        self.tutorialimg.setGeometry(200, 0, 953, 800)
         self.tutorialimg.setStyleSheet("background-image: url(tutorial.jpg)")
 
         self.menu_buttons = []
@@ -86,11 +86,9 @@ class Main(QWidget):
         self.back_menu.clicked.connect(self.menu)
         self.menu()
 
-
     def exit(self):
         """Раздел Выход. Закрывает окно программы."""
         self.close()
-
 
     def learning(self):
         """Раздел обучение. Здесь можно окрыть упржнение и посмотреть обучение"""
@@ -110,7 +108,6 @@ class Main(QWidget):
         self.start_ex.clicked.connect(self.run)
         self.back_menu.show()
 
-
     def select(self, choice):
         """Выбрать упражнение"""
         self.choice = choice
@@ -119,14 +116,12 @@ class Main(QWidget):
         else:
             self.start_ex.setDisabled(True)
 
-
     def run(self):
         """Начать упражнение"""
         self.start_ex.setDisabled(True)
-        dialog = Keyboard(self.level_programme[self.choice[:-1]]+[int(self.choice[0])])
+        dialog = Keyboard(self.level_programme[self.choice[:-1]] + [int(self.choice[0])])
         dialog.show()
         self.dialogs.append(dialog)
-
 
     def test(self):
         """Раздел тестирование. Здесь производится тестирование пользователя"""
@@ -136,14 +131,13 @@ class Main(QWidget):
         self.inputer.setEnabled(True)
         self.inputer.show()
         self.test_statistics = [0 for i in range(6)]
-        self.timer_value = 5
+        self.timer_value = 60
         self.time_show.show()
         self.time_show.setText("1:00")
         self.refresh()
         self.inputer.setFont(QFont('Courier New', 16))
         self.back_menu.show()
         self.inputer.textEdited.connect(self.input)
-
 
     def refresh(self):
         """Показ слов пользователю"""
@@ -157,14 +151,12 @@ class Main(QWidget):
             self.test_words[i].setFont(QFont('Courier-12', 20))
             self.test_words[i].setStyleSheet("color:none")
 
-
     def input(self):
         """Механизм обработки введеных пользователем входных данных, включение таймера"""
         if not self.timer_start:
             self.timer_start = True
             self.timer.timeout.connect(self.on_timer)
             self.timer.start(1000)
-
 
         if ' ' in self.inputer.text():
             self.current_word += 1
@@ -185,7 +177,6 @@ class Main(QWidget):
         if self.current_word == 10:
             self.refresh()
 
-
     def on_timer(self):
         """Отсчет времени"""
         self.timer_value -= 1
@@ -193,7 +184,6 @@ class Main(QWidget):
         if self.timer_value == 0:
             self.timer.stop()
             self.result()
-
 
     def result(self):
         """Подведение итогов"""
@@ -216,7 +206,6 @@ class Main(QWidget):
             self.statistics[i].setStyleSheet('color:' + coords[i][2])
             self.statistics[i].setText(str(self.test_statistics[i]))
 
-
     def clear(self):
         """Очистка окна при переходе от раздела к разделу"""
         for i in self.menu_buttons:
@@ -238,7 +227,6 @@ class Main(QWidget):
         self.start_ex.hide()
         self.inputer.setDisabled(True)
 
-
     def menu(self):
         """Раздел меню. Здесь можно перейти в другие разделы."""
         self.clear()
@@ -249,6 +237,7 @@ class Main(QWidget):
 
 class Keyboard(QWidget):
     """Окно упражнения"""
+
     def __init__(self, text):
         super().__init__()
         self.dialog_data = text
@@ -296,7 +285,6 @@ class Keyboard(QWidget):
         self.show()
         self.begin_x = 400
 
-
     def set_style(self, color):
         """Создание стилистики клавиши"""
         return '''
@@ -308,7 +296,6 @@ class Keyboard(QWidget):
                     min-width: 1em;
                     padding: 5px;
                 '''.format(color)
-
 
     def paintEvent(self, event):
         """Создание вступительного текста"""
@@ -327,7 +314,6 @@ class Keyboard(QWidget):
 
         self.drawText(event, qp)
 
-
     def drawText(self, event, qp):
         """Создание и движение текста по горизонтали"""
 
@@ -338,7 +324,6 @@ class Keyboard(QWidget):
             qp.setFont(QFont('Courier New', 60))
             qp.drawText(current_x, 400, 1500, 80, Qt.AlignLeft, self.text[i])
             current_x += 48
-
 
     def keyPressEvent(self, event):
         """Мезанизм подсвечивания клавиш на клавиатуре"""
@@ -376,7 +361,7 @@ class Keyboard(QWidget):
                             self.previoskey = [self.keyboard[i], keyboard[i][1]]
                             self.taunt_event()
 
-                        elif self.keyboard[i].text() == self.text[self.current_sign] and not(self.mistake):
+                        elif self.keyboard[i].text() == self.text[self.current_sign] and not (self.mistake):
                             self.current_sign += 1
                             self.begin_x -= 48
                             self.taunt_event()
@@ -391,11 +376,10 @@ class Keyboard(QWidget):
                         self.keyboard[i].setStyleSheet(self.set_style("grey"))
                         self.previoskey = [self.keyboard[i], keyboard[i][1]]
                 except Exception:
-                    self.previoskey = [self.keyboard[i],"green"]
+                    self.previoskey = [self.keyboard[i], "green"]
         if self.current_sign == len(self.text):
             self.timer.stop()
             self.finish()
-
 
     def finish(self):
         """Итог"""
@@ -415,7 +399,6 @@ class Keyboard(QWidget):
             self.time_show.setText("НЕ ЗАЧТЕНО\u2715")
             self.time_show.setStyleSheet("color: red")
 
-
     def on_timer(self):
         """Cчет времени"""
         self.timer_value -= 1
@@ -424,11 +407,11 @@ class Keyboard(QWidget):
             self.timer.stop()
             self.finish()
 
-
     def taunt_event(self):
         """Принудительный вызов PaintEvent"""
         self.setFixedSize(1500, 801)
         self.setFixedSize(1500, 800)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
